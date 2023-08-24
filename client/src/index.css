@@ -1,3 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700&display=swap");
+
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+/* Main colors */
+/* - main - #000000
+- black variation - #1A1A1A
+- secondary - #38a37f
+- accent - #4CC29A
+- white gray - #E6E6E6 */
+
+#root {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto Mono";
+}
+
+body {
+  background-color: #e6e6e6;
+}
+
+.border-btn {
+  border: solid 2px #38a37f;
+  color: #38a37f;
+  padding: 15px;
+  border-radius: 16px;
+}
+
+.full-btn {
+  background-color: #38a37f;
+  padding: 15px;
+  border-radius: 16px;
+  color: #e6e6e6;
+}
+
+.nav-links {
+  @apply text-black font-semibold cursor-pointer;
+}
+
+.nav-links:hover {
+  @apply text-[#38a37f];
+}
