@@ -4,6 +4,7 @@ export interface DialogProps {
   content: {
     title: string;
     description: string;
+    icon: React.ReactNode;
     btnText: string;
     btnSubmit: () => void;
     btnCancel: () => void;

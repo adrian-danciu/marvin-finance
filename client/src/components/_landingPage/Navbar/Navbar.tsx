@@ -3,13 +3,27 @@ import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/logo.png";
+import { UserCredentials } from "../../../types/user.types";
+import { logoutUser } from "../../../firebase/api/auth";
+import { useNavigate } from "react-router-dom";
 
 function classNames(...classes: string[]): string {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Navbar() {
-  const isLoggedIng = false;
+interface NavbarProps {
+  isLoggedIn: boolean;
+  userDetails: UserCredentials;
+}
+
+export default function Navbar({ isLoggedIn, userDetails }: NavbarProps) {
+  const navigate = useNavigate();
+
+  const handleLogout = async (e: any) => {
+    e.preventDefault();
+    await logoutUser();
+    navigate("/login");
+  };
 
   return (
     <Disclosure as="nav" className="fixed z-10 w-full bg-white shadow">
@@ -32,7 +46,7 @@ export default function Navbar() {
                 <div className="flex flex-shrink-0 items-center">
                   <img className="h-8 w-auto" src={logo} alt="Your Company" />
                 </div>
-                <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <div className="hidden sm:ml-6 sm:flex sm:space-x-4 md:space-x-8">
                   <a
                     href="#"
                     className="border-custom-green inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium text-gray-900"
@@ -60,7 +74,7 @@ export default function Navbar() {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                {isLoggedIng ? (
+                {isLoggedIn ? (
                   <>
                     <button
                       type="button"
@@ -122,7 +136,8 @@ export default function Navbar() {
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                href="#"
+                                href="/logout"
+                                onClick={handleLogout}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-sm text-gray-700",
@@ -137,11 +152,11 @@ export default function Navbar() {
                     </Menu>
                   </>
                 ) : (
-                  <Menu as="div" className="relative ml-3 hidden lg:block">
+                  <Menu as="div" className="relative ml-3 hidden sm:block">
                     <div className="flex justify-center gap-4">
                       <Link
                         to="/register"
-                        className="bg-custom-green inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white hover:opacity-80"
+                        className="bg-custom-green inline-flex items-center rounded-md border border-transparent font-medium text-white hover:opacity-80 sm:px-2 sm:py-0 sm:text-xs md:px-4 md:py-2 lg:text-sm"
                       >
                         Sign up
                       </Link>
@@ -158,7 +173,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          <Disclosure.Panel className="sm:hidden">
+          <Disclosure.Panel className="md:hidden">
             <div className="relative z-10 space-y-1 pb-4 pt-2 ">
               <Disclosure.Button
                 as="a"

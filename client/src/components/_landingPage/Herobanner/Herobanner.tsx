@@ -1,96 +1,35 @@
+import fullLogo from "../../../assets/full_logo.png";
+
 export default function Herobanner() {
   return (
-    <section className="bg-white">
-      <div className="relative isolate lg:pt-14">
-        <svg
-          className="absolute inset-0 -z-10 h-full w-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
-          aria-hidden="true"
-        >
-          <defs>
-            <pattern
-              id="83fd4e5a-9d52-42fc-97b6-718e5d7ee527"
-              width={200}
-              height={200}
-              x="50%"
-              y={-1}
-              patternUnits="userSpaceOnUse"
-            >
-              <path d="M100 200V.5M.5 .5H200" fill="none" />
-            </pattern>
-          </defs>
-          <svg x="50%" y={-1} className="overflow-visible fill-gray-50">
-            <path
-              d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
-              strokeWidth={0}
-            />
-          </svg>
-          <rect
-            width="100%"
-            height="100%"
-            strokeWidth={0}
-            fill="url(#83fd4e5a-9d52-42fc-97b6-718e5d7ee527)"
-          />
-        </svg>
-        <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:flex lg:items-center lg:gap-x-10 lg:px-8 lg:py-40">
-          <div className="mx-auto max-w-2xl lg:mx-0 lg:flex-auto">
-            <h1 className="mt-10 max-w-lg text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              Take Control of Your Finances
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              Discover the simplest way to manage your earnings, savings, and
-              investments in one place. With Marv, streamline your financial
-              life and make smarter decisions with real-time insights.
-            </p>
-            <div className="mt-10 flex items-center gap-x-6">
-              <a
-                href="#"
-                className="rounded-md bg-custom-green px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 hover:opacity-70 focus-visible:outline-offset-2 focus-visible:outline-custom-green"
-              >
-                Get started
-              </a>
-              <a
-                href="#"
-                className="text-sm font-semibold leading-6 text-gray-900 "
-              >
-                Learn more <span aria-hidden="true">→</span>
-              </a>
-            </div>
-          </div>
-          <div className="mt-16 sm:mt-24 lg:mt-0 lg:flex-shrink-0 lg:flex-grow">
-            <svg
-              viewBox="0 0 366 729"
-              role="img"
-              className="mx-auto w-[22.875rem] max-w-full drop-shadow-xl"
-            >
-              <title>App screenshot</title>
-              <defs>
-                <clipPath id="2ade4387-9c63-4fc4-b754-10e687a0d332">
-                  <rect width={316} height={684} rx={36} />
-                </clipPath>
-              </defs>
-              <path
-                fill="#4B5563"
-                d="M363.315 64.213C363.315 22.99 341.312 1 300.092 1H66.751C25.53 1 3.528 22.99 3.528 64.213v44.68l-.857.143A2 2 0 0 0 1 111.009v24.611a2 2 0 0 0 1.671 1.973l.95.158a2.26 2.26 0 0 1-.093.236v26.173c.212.1.398.296.541.643l-1.398.233A2 2 0 0 0 1 167.009v47.611a2 2 0 0 0 1.671 1.973l1.368.228c-.139.319-.314.533-.511.653v16.637c.221.104.414.313.56.689l-1.417.236A2 2 0 0 0 1 237.009v47.611a2 2 0 0 0 1.671 1.973l1.347.225c-.135.294-.302.493-.49.607v377.681c0 41.213 22 63.208 63.223 63.208h95.074c.947-.504 2.717-.843 4.745-.843l.141.001h.194l.086-.001 33.704.005c1.849.043 3.442.37 4.323.838h95.074c41.222 0 63.223-21.999 63.223-63.212v-394.63c-.259-.275-.48-.796-.63-1.47l-.011-.133 1.655-.276A2 2 0 0 0 366 266.62v-77.611a2 2 0 0 0-1.671-1.973l-1.712-.285c.148-.839.396-1.491.698-1.811V64.213Z"
-              />
-              <path
-                fill="#343E4E"
-                d="M16 59c0-23.748 19.252-43 43-43h246c23.748 0 43 19.252 43 43v615c0 23.196-18.804 42-42 42H58c-23.196 0-42-18.804-42-42V59Z"
-              />
-              <foreignObject
-                width={316}
-                height={684}
-                transform="translate(24 24)"
-                clipPath="url(#2ade4387-9c63-4fc4-b754-10e687a0d332)"
-              >
-                <img
-                  src="https://tailwindui.com/img/component-images/mobile-app-screenshot.png"
-                  alt=""
-                />
-              </foreignObject>
-            </svg>
-          </div>
-        </div>
+    <div className="mx-auto w-full bg-white px-4 pb-16 pt-40 text-center sm:px-6 sm:pt-40 md:pt-60 lg:px-8 lg:pt-60">
+      <div className="flex w-full items-center justify-center">
+        <img className="h-40 w-40" src={fullLogo} />
       </div>
-    </section>
+      <h1 className="font-display mx-auto max-w-4xl text-5xl font-medium tracking-tight text-slate-900 sm:text-7xl">
+        Personal Finances{" "}
+        <span className="text-custom-green relative whitespace-nowrap">
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 418 42"
+            className="absolute left-0 top-2/3 h-[0.58em] w-full fill-green-200/70"
+            preserveAspectRatio="none"
+          >
+            <path d="M203.371.916c-26.013-2.078-76.686 1.963-124.73 9.946L67.3 12.749C35.421 18.062 18.2 21.766 6.004 25.934 1.244 27.561.828 27.778.874 28.61c.07 1.214.828 1.121 9.595-1.176 9.072-2.377 17.15-3.92 39.246-7.496C123.565 7.986 157.869 4.492 195.942 5.046c7.461.108 19.25 1.696 19.17 2.582-.107 1.183-7.874 4.31-25.75 10.366-21.992 7.45-35.43 12.534-36.701 13.884-2.173 2.308-.202 4.407 4.442 4.734 2.654.187 3.263.157 15.593-.78 35.401-2.686 57.944-3.488 88.365-3.143 46.327.526 75.721 2.23 130.788 7.584 19.787 1.924 20.814 1.98 24.557 1.332l.066-.011c1.201-.203 1.53-1.825.399-2.335-2.911-1.31-4.893-1.604-22.048-3.261-57.509-5.556-87.871-7.36-132.059-7.842-23.239-.254-33.617-.116-50.627.674-11.629.54-42.371 2.494-46.696 2.967-2.359.259 8.133-3.625 26.504-9.81 23.239-7.825 27.934-10.149 28.304-14.005.417-4.348-3.529-6-16.878-7.066Z" />
+          </svg>
+          <span className="relative">made simple</span>
+        </span>{" "}
+        for you.
+      </h1>
+      <p className="mx-auto mt-6 max-w-2xl text-lg tracking-tight text-slate-700">
+        We help you manage your personal finances with ease. Our app is designed
+        to help you keep track of your expenses, income, and savings.
+      </p>
+      <div className="mt-10 flex justify-center">
+        <button className="bg-custom-green rounded-md p-4 text-white hover:opacity-80">
+          Get started
+        </button>
+      </div>
+    </div>
   );
 }

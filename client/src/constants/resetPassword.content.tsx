@@ -4,7 +4,11 @@ export const resetPasswordContent = {
   title: "Reset your password",
   description:
     "Please fill in the email address associated to your account. We will send you a link to reset your password via email.",
-
+  icon: (
+    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-50">
+      <EnvelopeIcon className="text-custom-green h-8 w-8" aria-hidden="true" />
+    </div>
+  ),
   children: (
     <div className="mt-4 flex flex-col items-start justify-start">
       <label

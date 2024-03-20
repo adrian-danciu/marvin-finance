@@ -8,7 +8,7 @@ export default function DialogComponent({
   setOpen,
   content,
 }: DialogProps) {
-  const { title, description, btnText, btnSubmit, btnCancel, children } =
+  const { icon, title, description, btnText, btnSubmit, btnCancel, children } =
     content;
 
   return (
@@ -39,12 +39,7 @@ export default function DialogComponent({
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                 <div>
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-50">
-                    <EnvelopeIcon
-                      className="h-10 w-10 text-green-600"
-                      aria-hidden="true"
-                    />
-                  </div>
+                  {icon}
                   <div className="mt-3 text-center sm:mt-5">
                     <Dialog.Title
                       as="h3"

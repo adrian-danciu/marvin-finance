@@ -1,34 +1,48 @@
 import {
-  BanknotesIcon,
-  CalculatorIcon,
-  CreditCardIcon,
-  PaperAirplaneIcon,
+  CloudArrowUpIcon,
+  LockClosedIcon,
+  ServerIcon,
 } from "@heroicons/react/24/outline";
 
 export const featuresSectionContent = [
   {
-    name: "Effortless Monitoring for Every Dollar",
+    name: "Push to deploy.",
     description:
-      "Take the guesswork out of your financial flow with our intuitive Income & Expenses Tracker. ",
-    icon: BanknotesIcon,
+      "Lorem ipsum, dolor sit amet consectetur adipisicing elit aute id magna.",
+    icon: CloudArrowUpIcon,
   },
   {
-    name: "Plan with Precision, Spend with Confidence",
+    name: "SSL certificates.",
     description:
-      "Our comprehensive Budgeting Tools give you the power to allocate your funds efficiently. ",
-    icon: PaperAirplaneIcon,
+      "Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.",
+    icon: LockClosedIcon,
   },
   {
-    name: "Set Goals, Achieve Dreams",
+    name: "Database backups.",
     description:
-      "Whether you're saving for a vacation, investing in your future, or planning a major purchase, our goal-setting features help you define, track, and reach your financial milestones. ",
-    icon: CalculatorIcon,
+      "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus.",
+    icon: ServerIcon,
+  },
+];
+
+export const featuresSectionContent2 = [
+  {
+    name: "Push to deploy.",
+    description:
+      "Lorem ipsum, dolor sit amet consectetur adipisicing elit aute id magna.",
+    icon: CloudArrowUpIcon,
   },
   {
-    name: "Conquer Your Debt, Enjoy Your Freedom",
+    name: "SSL certificates.",
     description:
-      "Tailor your repayment plan, organize your debts, and track your progress down to the last penny. ",
-    icon: CreditCardIcon,
+      "Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.",
+    icon: LockClosedIcon,
+  },
+  {
+    name: "Database backups.",
+    description:
+      "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus.",
+    icon: ServerIcon,
   },
 ];
 
