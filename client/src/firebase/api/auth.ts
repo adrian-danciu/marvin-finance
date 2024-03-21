@@ -7,8 +7,9 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
   GithubAuthProvider,
+  sendPasswordResetEmail,
 } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, Index } from "firebase/firestore";
 
 import { UserCredentials } from "../../types/user.types";
 
@@ -74,17 +75,44 @@ export const loginUserEmail = async (email: string, password: string) => {
   }
 };
 
-export const loginUserProvider = async (provider: string) => {
-  const google = new GoogleAuthProvider();
-  const facebook = new FacebookAuthProvider();
-  const github = new GithubAuthProvider();
+const providerMap = {
+  google: new GoogleAuthProvider(),
+  facebook: new FacebookAuthProvider(),
+  github: new GithubAuthProvider(),
+};
 
-  if (provider === "google") {
-    return await signInWithPopup(auth, google);
-  } else if (provider === "facebook") {
-    return await signInWithPopup(auth, facebook);
-  } else if (provider === "github") {
-    return await signInWithPopup(auth, github);
+export const loginUserProvider = async (providerKey: any) => {
+  const provider = providerMap[providerKey];
+  if (!provider) throw new Error("Unsupported provider");
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    const providerData = user.providerData[0];
+    const email = providerData.email || "";
+    const firstName = providerData.displayName?.split(" ")[0] || "";
+    const lastName =
+      providerData.displayName?.split(" ").slice(1).join(" ") || "";
+    const userDetails = {
+      email,
+      firstName,
+      lastName,
+      createdAt: new Date().toISOString(),
+    };
+
+    if (user.uid) {
+      await setDoc(doc(db, "users", user.uid), userDetails, { merge: true });
+      console.log("User details saved to Firestore");
+    }
+
+    store.dispatch(setUserDetails(userDetails as UserCredentials));
+    store.dispatch(setLoginStatus(true));
+
+    return user;
+  } catch (error) {
+    console.error("Error with provider login:", error);
+    throw error;
   }
 };
 
@@ -116,5 +144,14 @@ export const logoutUser = async () => {
     await persistor.purge();
   } catch (error) {
     console.error("Error signing out:", error);
+  }
+};
+
+export const resetPassword = async (email: string) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    console.log("Email sent");
+  } catch (error) {
+    console.error("Error sending email:", error);
   }
 };

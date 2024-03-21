@@ -5,9 +5,12 @@ export interface DialogProps {
     title: string;
     description: string;
     icon: React.ReactNode;
-    btnText: string;
-    btnSubmit: () => void;
-    btnCancel: () => void;
     children: React.ReactNode;
+    btnText: string;
+    btnSubmit: (email?: string) => void;
+    btnCancel?: () => void;
+    email?: string;
+    setEmail?: (email: string) => void;
+    onSubmit?: () => void;
   };
 }

@@ -1,6 +1,5 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { DialogProps } from "../../../types/dialog.types";
 
 export default function DialogComponent({
