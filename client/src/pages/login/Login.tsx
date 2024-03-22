@@ -55,7 +55,7 @@ const Login: React.FC = () => {
       const userDetails = await fetchUserDetails(userCredential?.uid as string);
       dispatch(setLoginStatus(true));
       dispatch(setUserDetails(userDetails as UserCredentials));
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Login error:", error);
     }
@@ -63,7 +63,7 @@ const Login: React.FC = () => {
 
   const providerLogin = async () => {
     await loginUserProvider("google");
-    navigate("/");
+    navigate("/dashboard");
   };
 
   return (

@@ -2,9 +2,9 @@ import FeaturesSection from "../../components/_landingPage/Features/Features";
 import Footer from "../../components/_landingPage/Footer/Footer";
 import GetStarted from "../../components/_landingPage/GetStarted/GetStarted";
 import Herobanner from "../../components/_landingPage/Herobanner/Herobanner";
-import Navbar from "../../components/_landingPage/Navbar/Navbar";
 import { useSelector } from "react-redux";
 import { UserCredentials } from "../../types/user.types";
+import Navbar from "../../components/_landingPage/Navbar/Navbar";
 
 const LandingPage: React.FC = () => {
   const userDetails = useSelector(

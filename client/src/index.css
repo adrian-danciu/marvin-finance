@@ -24,9 +24,9 @@
   font-family: "Roboto Mono";
 }
 
-body {
+/* body {
   background-color: #e6e6e6;
-}
+} */
 
 .border-btn {
   border: solid 2px #38a37f;
@@ -43,7 +43,7 @@ body {
 }
 
 .nav-links {
-  @apply text-black font-semibold cursor-pointer;
+  @apply cursor-pointer font-semibold text-black;
 }
 
 .nav-links:hover {
