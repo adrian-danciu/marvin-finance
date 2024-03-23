@@ -18,6 +18,7 @@ import {
 import { Fragment, useState } from "react";
 import logoFull from "../../assets/full_logo.png";
 import GeneralStats from "../../components/_dashboard/GeneralStats/GeneralStats";
+import AccountShowcase from "../../components/_dashboard/AccountsShowcase/AccountsShowcase";
 
 const navigation = [
   { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
