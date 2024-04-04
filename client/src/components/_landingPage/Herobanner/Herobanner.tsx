@@ -1,6 +1,6 @@
 import fullLogo from "../../../assets/full_logo.png";
 
-export default function Herobanner() {
+export default function HeroBanner() {
   return (
     <div className="mx-auto w-full bg-white px-4 pb-16 pt-40 text-center sm:px-6 sm:pt-40 md:pt-60 lg:px-8 lg:pt-60">
       <div className="flex w-full items-center justify-center">

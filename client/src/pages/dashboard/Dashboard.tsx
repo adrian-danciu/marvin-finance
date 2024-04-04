@@ -17,8 +17,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import logoFull from "../../assets/full_logo.png";
+import Table from "../../components/_core/Table/Table";
 import GeneralStats from "../../components/_dashboard/GeneralStats/GeneralStats";
-import AccountShowcase from "../../components/_dashboard/AccountsShowcase/AccountsShowcase";
 
 const navigation = [
   { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
@@ -116,7 +116,7 @@ export default function Dashboard() {
                                     item.current
                                       ? "bg-black text-white"
                                       : "text-gray-900 hover:bg-black hover:text-white",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6",
+                                    "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
                                   )}
                                 >
                                   <item.icon
@@ -170,7 +170,7 @@ export default function Dashboard() {
                             item.current
                               ? "bg-black text-white"
                               : "text-gray-900 hover:bg-black hover:text-white",
-                            "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6",
+                            "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
                           )}
                         >
                           <item.icon
@@ -289,7 +289,7 @@ export default function Dashboard() {
                               href={item.href}
                               className={classNames(
                                 active ? "bg-gray-50" : "",
-                                "block px-3 py-1 text-sm leading-6 text-gray-900",
+                                "block px-3 py-1 text-sm leading-6 text-gray-900"
                               )}
                             >
                               {item.name}
@@ -307,6 +307,7 @@ export default function Dashboard() {
           <main className="py-10">
             <div className="px-4 sm:px-6 lg:px-8">
               <GeneralStats />
+              <Table />
             </div>
           </main>
         </div>

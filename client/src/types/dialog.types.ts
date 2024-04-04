@@ -8,7 +8,7 @@ export interface DialogProps {
     children: React.ReactNode;
     btnText: string;
     btnSubmit: (email?: string) => void;
-    btnCancel?: () => void;
+    btnCancel: () => void;
     email?: string;
     setEmail?: (email: string) => void;
     onSubmit?: () => void;
