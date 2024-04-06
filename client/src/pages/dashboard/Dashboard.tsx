@@ -18,7 +18,9 @@ import {
 import { Fragment, useState } from "react";
 import logoFull from "../../assets/full_logo.png";
 import Table from "../../components/_core/Table/Table";
+import BudgetOverview from "../../components/_dashboard/BudgetOverview/BudgetOverview";
 import GeneralStats from "../../components/_dashboard/GeneralStats/GeneralStats";
+import UpcomingPayments from "../../components/_dashboard/UpcomingPayments/UpcomingPayments";
 
 const navigation = [
   { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
@@ -308,6 +310,10 @@ export default function Dashboard() {
             <div className="px-4 sm:px-6 lg:px-8">
               <GeneralStats />
               <Table />
+              <div className="grid grid-cols-12 mt-10 gap-6 xl:gap-8">
+                <BudgetOverview />
+                <UpcomingPayments />
+              </div>
             </div>
           </main>
         </div>
