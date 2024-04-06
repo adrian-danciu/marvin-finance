@@ -3,44 +3,47 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
-import {
-  Bars3Icon,
-  BellIcon,
-  CalendarIcon,
-  ChartPieIcon,
-  Cog6ToothIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
-  HomeIcon,
-  UsersIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import logoFull from "../../assets/full_logo.png";
-import Table from "../../components/_core/Table/Table";
-import BudgetOverview from "../../components/_dashboard/BudgetOverview/BudgetOverview";
-import GeneralStats from "../../components/_dashboard/GeneralStats/GeneralStats";
-import UpcomingPayments from "../../components/_dashboard/UpcomingPayments/UpcomingPayments";
+import { navigation, userNavigation } from "../../constants/navigation.config";
+import { logoutUser } from "../../firebase/api/auth";
+import { UserCredentials } from "../../types/user.types";
 
-const navigation = [
-  { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
-  { name: "Team", href: "#", icon: UsersIcon, current: false },
-  { name: "Projects", href: "#", icon: FolderIcon, current: false },
-  { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
-  { name: "Documents", href: "#", icon: DocumentDuplicateIcon, current: false },
-  { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
-];
-const userNavigation = [
-  { name: "Your profile", href: "#" },
-  { name: "Sign out", href: "#" },
-];
+export default function AppLayout() {
+  const userDetails = useSelector(
+    (state: { userDetails: { userDetails: UserCredentials } }) =>
+      state.userDetails.userDetails
+  );
 
-function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
-export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLogout = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    item: { name: string; href: string }
+  ) => {
+    e.preventDefault();
+    if (item.name === "Sign out") {
+      try {
+        await logoutUser();
+        navigate("/login");
+      } catch (error) {
+        console.error("Logout failed", error);
+      }
+    } else {
+      navigate(item.href);
+    }
+  };
+
+  const getCurrentPathSegment = () => {
+    return location.pathname.split("/").pop();
+  };
+
+  const currentPathSegment = getCurrentPathSegment();
 
   return (
     <>
@@ -108,42 +111,25 @@ export default function Dashboard() {
                     </div>
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                        <li>
-                          <ul role="list" className="-mx-2 space-y-1">
-                            {navigation.map((item) => (
-                              <li key={item.name}>
-                                <a
-                                  href={item.href}
-                                  className={classNames(
-                                    item.current
-                                      ? "bg-black text-white"
-                                      : "text-gray-900 hover:bg-black hover:text-white",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
-                                  )}
-                                >
-                                  <item.icon
-                                    className="h-6 w-6 shrink-0"
-                                    aria-hidden="true"
-                                  />
-                                  {item.name}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-
-                        <li className="mt-auto">
-                          <a
-                            href="#"
-                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-black hover:text-white"
-                          >
-                            <Cog6ToothIcon
-                              className="h-6 w-6 shrink-0"
-                              aria-hidden="true"
-                            />
-                            Settings
-                          </a>
-                        </li>
+                        {navigation.map((item) => (
+                          <li key={item.name}>
+                            <Link
+                              onClick={() => setSidebarOpen(false)}
+                              to={item.href}
+                              className={`group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 ${
+                                currentPathSegment === item.href
+                                  ? "bg-black text-white"
+                                  : "text-gray-900 hover:bg-black hover:text-white"
+                              }`}
+                            >
+                              <item.icon
+                                className="h-6 w-6 shrink-0"
+                                aria-hidden="true"
+                              />
+                              {item.name}
+                            </Link>
+                          </li>
+                        ))}
                       </ul>
                     </nav>
                   </div>
@@ -162,42 +148,24 @@ export default function Dashboard() {
             </div>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                <li>
-                  <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => (
-                      <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? "bg-black text-white"
-                              : "text-gray-900 hover:bg-black hover:text-white",
-                            "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
-                          )}
-                        >
-                          <item.icon
-                            className="h-6 w-6 shrink-0"
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-
-                <li className="mt-auto">
-                  <a
-                    href="#"
-                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-black hover:text-white"
-                  >
-                    <Cog6ToothIcon
-                      className="h-6 w-6 shrink-0"
-                      aria-hidden="true"
-                    />
-                    Settings
-                  </a>
-                </li>
+                {navigation.map((item) => (
+                  <li key={item.name}>
+                    <Link
+                      to={item.href}
+                      className={`group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 ${
+                        currentPathSegment === item.href
+                          ? "bg-black text-white"
+                          : "text-gray-900 hover:bg-black hover:text-white"
+                      }`}
+                    >
+                      <item.icon
+                        className="h-6 w-6 shrink-0"
+                        aria-hidden="true"
+                      />
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </nav>
           </div>
@@ -266,7 +234,7 @@ export default function Dashboard() {
                         className="ml-4 text-sm font-semibold leading-6 text-gray-900"
                         aria-hidden="true"
                       >
-                        Tom Cook
+                        {userDetails.firstName} {""} {userDetails.lastName}
                       </span>
                       <ChevronDownIcon
                         className="ml-2 h-5 w-5 text-gray-400"
@@ -287,15 +255,14 @@ export default function Dashboard() {
                       {userNavigation.map((item) => (
                         <Menu.Item key={item.name}>
                           {({ active }) => (
-                            <a
-                              href={item.href}
-                              className={classNames(
-                                active ? "bg-gray-50" : "",
-                                "block px-3 py-1 text-sm leading-6 text-gray-900"
-                              )}
+                            <button
+                              onClick={(e) => handleLogout(e, item)}
+                              className={`block px-3 py-1 text-sm leading-6 ${
+                                active ? "bg-gray-50" : ""
+                              } text-gray-900 cursor-pointer`}
                             >
                               {item.name}
-                            </a>
+                            </button>
                           )}
                         </Menu.Item>
                       ))}
@@ -305,15 +272,10 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-
+          {/* Content goes in here */}
           <main className="py-10">
             <div className="px-4 sm:px-6 lg:px-8">
-              <GeneralStats />
-              <Table />
-              <div className="grid grid-cols-12 mt-10 gap-6 xl:gap-8">
-                <BudgetOverview />
-                <UpcomingPayments />
-              </div>
+              <Outlet />
             </div>
           </main>
         </div>
