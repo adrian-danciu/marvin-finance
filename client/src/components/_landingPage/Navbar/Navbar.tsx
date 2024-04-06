@@ -1,11 +1,10 @@
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../assets/logo.png";
-import { UserCredentials } from "../../../types/user.types";
 import { logoutUser } from "../../../firebase/api/auth";
-import { useNavigate } from "react-router-dom";
+import { UserCredentials } from "../../../types/user.types";
 
 function classNames(...classes: string[]): string {
   return classes.filter(Boolean).join(" ");
@@ -18,6 +17,8 @@ interface NavbarProps {
 
 export default function Navbar({ isLoggedIn, userDetails }: NavbarProps) {
   const navigate = useNavigate();
+
+  console.log(userDetails);
 
   const handleLogout = async (e: any) => {
     e.preventDefault();
@@ -113,7 +114,7 @@ export default function Navbar({ isLoggedIn, userDetails }: NavbarProps) {
                                 href="#"
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700",
+                                  "block px-4 py-2 text-sm text-gray-700"
                                 )}
                               >
                                 Your Profile
@@ -126,7 +127,7 @@ export default function Navbar({ isLoggedIn, userDetails }: NavbarProps) {
                                 href="#"
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700",
+                                  "block px-4 py-2 text-sm text-gray-700"
                                 )}
                               >
                                 Settings
@@ -140,7 +141,7 @@ export default function Navbar({ isLoggedIn, userDetails }: NavbarProps) {
                                 onClick={handleLogout}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700",
+                                  "block px-4 py-2 text-sm text-gray-700"
                                 )}
                               >
                                 Sign out

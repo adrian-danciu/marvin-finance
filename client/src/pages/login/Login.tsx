@@ -1,21 +1,20 @@
 import { EnvelopeIcon, LockClosedIcon } from "@heroicons/react/20/solid";
-import google from "../../assets/google.svg";
-import logoFull from "../../assets/full_logo.png";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import logoFull from "../../assets/full_logo.png";
+import google from "../../assets/google.svg";
 import DialogComponent from "../../components/_core/Dialog/Dialog";
 import { getResetPasswordContent } from "../../constants/resetPassword.content";
-import { UserCredentials } from "../../types/user.types";
 import {
-  loginUserEmail,
   fetchUserDetails,
-  resetPassword,
+  loginUserEmail,
   loginUserProvider,
+  resetPassword,
 } from "../../firebase/api/auth";
-import { useDispatch } from "react-redux";
-import { setUserDetails, setLoginStatus } from "../../store/actions";
-import { useNavigate } from "react-router-dom";
+import { setLoginStatus, setUserDetails } from "../../store/actions";
+import { UserCredentials } from "../../types/user.types";
 
 const Login: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -43,19 +42,19 @@ const Login: React.FC = () => {
     resetEmail,
     setResetEmail,
     handleDialog,
-    handleDialogClose,
+    handleDialogClose
   );
 
   const onLogin = async (data: Partial<UserCredentials>) => {
     try {
       const userCredential = await loginUserEmail(
         data.email as string,
-        data.password as string,
+        data.password as string
       );
       const userDetails = await fetchUserDetails(userCredential?.uid as string);
       dispatch(setLoginStatus(true));
       dispatch(setUserDetails(userDetails as UserCredentials));
-      navigate("/dashboard");
+      navigate("/app");
     } catch (error) {
       console.error("Login error:", error);
     }
@@ -63,7 +62,7 @@ const Login: React.FC = () => {
 
   const providerLogin = async () => {
     await loginUserProvider("google");
-    navigate("/dashboard");
+    navigate("/app");
   };
 
   return (
