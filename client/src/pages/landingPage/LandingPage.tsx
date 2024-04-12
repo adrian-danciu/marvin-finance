@@ -11,12 +11,11 @@ const LandingPage: React.FC = () => {
     (state: { userDetails: { userDetails: UserCredentials } }) =>
       state.userDetails.userDetails
   );
-  console.log(userDetails);
+
   const isLoggedIn = useSelector(
     (state: { loginStatus: { isLoggedIn: boolean } }) =>
       state.loginStatus.isLoggedIn
   );
-  console.log(isLoggedIn);
 
   return (
     <section>
