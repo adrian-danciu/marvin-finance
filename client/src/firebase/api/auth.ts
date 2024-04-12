@@ -1,24 +1,24 @@
-import { auth, db } from "../firebase.config";
 import {
+  FacebookAuthProvider,
+  GithubAuthProvider,
+  GoogleAuthProvider,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  GithubAuthProvider,
-  sendPasswordResetEmail,
 } from "firebase/auth";
-import { doc, setDoc, getDoc, Index } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { auth, db } from "../firebase.config";
 
 import { UserCredentials } from "../../types/user.types";
 
-import { store, persistor } from "../../store/store";
 import { setLoginStatus, setUserDetails } from "../../store/actions";
+import { persistor, store } from "../../store/store";
 
 const addUserToFirestore = async (
   userId: string,
-  userDetails: Partial<UserCredentials>,
+  userDetails: Partial<UserCredentials>
 ) => {
   try {
     await setDoc(doc(db, "users", userId), userDetails);
@@ -35,7 +35,7 @@ export const registerUser = async (userData: UserCredentials) => {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
-      password,
+      password
     );
     const user = userCredential.user;
     if (user) {
@@ -58,7 +58,7 @@ export const loginUserEmail = async (email: string, password: string) => {
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
-      password,
+      password
     );
     const user = userCredential.user;
     if (user) {
@@ -81,7 +81,9 @@ const providerMap = {
   github: new GithubAuthProvider(),
 };
 
-export const loginUserProvider = async (providerKey: any) => {
+type ProviderKey = keyof typeof providerMap;
+
+export const loginUserProvider = async (providerKey: ProviderKey) => {
   const provider = providerMap[providerKey];
   if (!provider) throw new Error("Unsupported provider");
 

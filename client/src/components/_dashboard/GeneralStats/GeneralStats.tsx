@@ -4,10 +4,19 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/solid";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
 import { getAddExpenseContent } from "../../../constants/newExpense.content";
 import { getAddIncomeContent } from "../../../constants/newIncome.content";
+import {
+  addExpense,
+  addIncome,
+} from "../../../firebase/api/transactions/addTransactions";
 import useAnimatedNumber from "../../../hooks/useAnimatedNumber";
 import { DialogProps } from "../../../types/dialog.types";
+import { Transaction } from "../../../types/transactions.types";
+import { UserCredentials } from "../../../types/user.types";
 import DialogComponent from "../../_core/Dialog/Dialog";
 import AccountShowcase from "../AccountsShowcase/AccountsShowcase";
 
@@ -51,44 +60,66 @@ const clients: Client[] = [
 
 export default function GeneralStats() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogContent, setDialogContent] = useState(null);
-  const [formData, setFormData] = useState({ title: "", date: "", amount: "" });
+  const [activeClientType, setActiveClientType] = useState<
+    "Income" | "Expenses" | null
+  >(null);
+  const [formData, setFormData] = useState<Transaction>({
+    id: uuidv4(),
+    title: "",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    user_id: "",
+    amount: 0,
+    category: "",
+    currency: "EUR",
+  });
+  const userDetails = useSelector(
+    (state: { userDetails: { userDetails: UserCredentials } }) =>
+      state.userDetails.userDetails
+  );
 
-  const handleFormDataChange = (key: any, value: any) => {
-    console.log("Form data changed: ", key, value);
-    setFormData((prevData) => ({ ...prevData, [key]: value }));
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
 
-  const handleSubmit = () => {
-    setDialogOpen(false);
-    console.log("Form data submitted: ", formData);
+  const onSubmit = async (data: Transaction) => {
+    try {
+      const { title, amount, date } = data;
+      const transactionDetails = {
+        id: uuidv4(),
+        user_id: userDetails.id,
+        title,
+        date: date,
+        amount: Number(amount),
+        category: "",
+        currency: "EUR",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      if (activeClientType === "Income") {
+        await addIncome(userDetails.id, transactionDetails);
+      } else {
+        await addExpense(userDetails.id, transactionDetails);
+      }
+
+      reset();
+      setDialogOpen(false);
+    } catch (error) {
+      console.error("Error while adding transaction:", error);
+    }
   };
 
   const handleCancel = () => {
     setDialogOpen(false);
-    setFormData({ title: "", date: "", amount: "" });
+    setFormData(formData);
   };
 
-  const handleOpenDialog = (clientName: string) => {
-    if (clientName === "Income") {
-      setDialogContent(
-        getAddIncomeContent(
-          formData,
-          handleFormDataChange,
-          handleSubmit,
-          handleCancel
-        ) as any
-      );
-    } else if (clientName === "Expenses") {
-      setDialogContent(
-        getAddExpenseContent(
-          formData,
-          handleFormDataChange,
-          handleSubmit,
-          handleCancel
-        ) as any
-      );
-    }
+  const handleOpenDialog = (clientType: "Income" | "Expenses") => {
+    setActiveClientType(clientType);
     setDialogOpen(true);
   };
 
@@ -121,7 +152,11 @@ export default function GeneralStats() {
                   {client.name}
                 </div>
               </div>
-              <button onClick={() => handleOpenDialog(client.name)}>
+              <button
+                onClick={() =>
+                  handleOpenDialog(client.name as "Income" | "Expenses")
+                }
+              >
                 <PlusIcon
                   className={`h-8 w-8 rounded-xl p-2  ${client.name === "Income" ? "bg-green-100" : "bg-red-100"} ${client.name === "Income" ? "text-custom-green" : "text-red-500"}`}
                 />
@@ -154,7 +189,14 @@ export default function GeneralStats() {
         <DialogComponent
           open={dialogOpen}
           setOpen={setDialogOpen}
-          content={dialogContent as any}
+          content={
+            activeClientType === "Income"
+              ? getAddIncomeContent(handleCancel)
+              : getAddExpenseContent(handleCancel)
+          }
+          register={register}
+          handleSubmit={handleSubmit(onSubmit as any)}
+          errors={errors}
         />
       )}
     </ul>
