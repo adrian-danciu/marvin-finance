@@ -58,7 +58,7 @@ export default function DialogComponent({
                   <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                     <button
                       type="submit"
-                      className="bg-custom-green focus-visible:outline-custom-green inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                      className={`${content.title === "Add Income" ? "bg-custom-green focus-visible:outline-custom-green" : "bg-red-500 focus-visible:outline-red-500"} inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2`}
                       onClick={() => btnSubmit()}
                     >
                       {btnText}
