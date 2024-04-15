@@ -9,10 +9,7 @@ import { useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import { getAddExpenseContent } from "../../../constants/newExpense.content";
 import { getAddIncomeContent } from "../../../constants/newIncome.content";
-import {
-  addExpense,
-  addIncome,
-} from "../../../firebase/api/transactions/addTransactions";
+import { addTransaction } from "../../../firebase/api/transactions/addTransactions";
 import useAnimatedNumber from "../../../hooks/useAnimatedNumber";
 import { DialogProps } from "../../../types/dialog.types";
 import { Transaction } from "../../../types/transactions.types";
@@ -36,7 +33,7 @@ interface Client {
 const clients: Client[] = [
   {
     id: 1,
-    name: "Income",
+    name: "income",
     icon: <ArrowUpLeftIcon className="h-6 w-6 text-green-100" />,
     lastTransaction: {
       date: "December 13, 2022",
@@ -47,7 +44,7 @@ const clients: Client[] = [
   },
   {
     id: 2,
-    name: "Expenses",
+    name: "expenses",
     icon: <ArrowDownRightIcon className="h-6 w-6 text-red-100" />,
     lastTransaction: {
       date: "January 22, 2023",
@@ -61,18 +58,8 @@ const clients: Client[] = [
 export default function GeneralStats() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeClientType, setActiveClientType] = useState<
-    "Income" | "Expenses" | null
+    "income" | "expense" | null
   >(null);
-  const [formData, setFormData] = useState<Transaction>({
-    id: uuidv4(),
-    title: "",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    user_id: "",
-    amount: 0,
-    category: "",
-    currency: "EUR",
-  });
   const userDetails = useSelector(
     (state: { userDetails: { userDetails: UserCredentials } }) =>
       state.userDetails.userDetails
@@ -87,23 +74,25 @@ export default function GeneralStats() {
 
   const onSubmit = async (data: Transaction) => {
     try {
-      const { title, amount, date } = data;
+      const { title, amount, date, account, category, currency } = data;
       const transactionDetails = {
         id: uuidv4(),
         user_id: userDetails.id,
         title,
         date: date,
+        type: activeClientType,
+        account,
         amount: Number(amount),
-        category: "",
-        currency: "EUR",
+        category,
+        currency,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
 
-      if (activeClientType === "Income") {
-        await addIncome(userDetails.id, transactionDetails);
+      if (activeClientType === "income") {
+        await addTransaction(userDetails.id, transactionDetails);
       } else {
-        await addExpense(userDetails.id, transactionDetails);
+        await addTransaction(userDetails.id, transactionDetails);
       }
 
       reset();
@@ -115,10 +104,9 @@ export default function GeneralStats() {
 
   const handleCancel = () => {
     setDialogOpen(false);
-    setFormData(formData);
   };
 
-  const handleOpenDialog = (clientType: "Income" | "Expenses") => {
+  const handleOpenDialog = (clientType: "income" | "expense") => {
     setActiveClientType(clientType);
     setDialogOpen(true);
   };
@@ -142,23 +130,23 @@ export default function GeneralStats() {
             className="overflow-hidden rounded-xl border border-gray-200"
           >
             <div
-              className={`flex items-center justify-between gap-x-4 border-b border-gray-900/5 ${client.name === "Income" ? "bg-custom-green" : "bg-red-500"} p-6`}
+              className={`flex items-center justify-between gap-x-4 border-b border-gray-900/5 ${client.name === "income" ? "bg-custom-green" : "bg-red-500"} p-6`}
             >
               <div className="flex items-center gap-x-4">
                 {client.icon}
                 <div
-                  className={`text-md font-medium leading-6 ${client.name === "Income" ? "text-green-100" : "text-red-100"}`}
+                  className={`text-md font-medium leading-6 ${client.name === "income" ? "text-green-100" : "text-red-100"}`}
                 >
-                  {client.name}
+                  {client.name === "income" ? "Income" : "Expenses"}
                 </div>
               </div>
               <button
                 onClick={() =>
-                  handleOpenDialog(client.name as "Income" | "Expenses")
+                  handleOpenDialog(client.name as "income" | "expense")
                 }
               >
                 <PlusIcon
-                  className={`h-8 w-8 rounded-xl p-2  ${client.name === "Income" ? "bg-green-100" : "bg-red-100"} ${client.name === "Income" ? "text-custom-green" : "text-red-500"}`}
+                  className={`h-8 w-8 rounded-xl p-2  ${client.name === "income" ? "bg-green-100" : "bg-red-100"} ${client.name === "income" ? "text-custom-green" : "text-red-500"}`}
                 />
               </button>
             </div>
@@ -172,7 +160,7 @@ export default function GeneralStats() {
               </div>
               <div className="flex justify-between gap-x-4 py-3">
                 <dt className="text-gray-500">
-                  Last {client.name === "Income" ? "Income" : "Expense"}
+                  Last {client.name === "income" ? "Income" : "Expense"}
                 </dt>
                 <dd className="text-gray-700">
                   <time dateTime={client.lastTransaction.dateTime}>
@@ -190,7 +178,7 @@ export default function GeneralStats() {
           open={dialogOpen}
           setOpen={setDialogOpen}
           content={
-            activeClientType === "Income"
+            activeClientType === "income"
               ? getAddIncomeContent(handleCancel)
               : getAddExpenseContent(handleCancel)
           }
