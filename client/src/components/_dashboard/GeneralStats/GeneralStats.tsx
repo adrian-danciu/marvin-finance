@@ -65,6 +65,7 @@ export default function GeneralStats() {
       state.userDetails.userDetails
   );
 
+
   const {
     register,
     handleSubmit,
@@ -88,6 +89,7 @@ export default function GeneralStats() {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
+
 
       if (activeClientType === "income") {
         await addTransaction(userDetails.id, transactionDetails);

@@ -42,14 +42,14 @@ const Login: React.FC = () => {
     resetEmail,
     setResetEmail,
     handleDialog,
-    handleDialogClose
+    handleDialogClose,
   );
 
   const onLogin = async (data: Partial<UserCredentials>) => {
     try {
       const userCredential = await loginUserEmail(
         data.email as string,
-        data.password as string
+        data.password as string,
       );
       const userDetails = await fetchUserDetails(userCredential?.uid as string);
       dispatch(setLoginStatus(true));

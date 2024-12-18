@@ -12,7 +12,7 @@ export const addTransaction = async (
   userID: string,
   transactionDetails: Transaction
 ) => {
-  const userTransactionDoc = doc(db, "transactions", userID);
+  const userTransactionDoc = doc(db, "transactions", userID) || [];
   const docSnap = (await getDoc(userTransactionDoc)) as DocumentData;
   if (docSnap.exists()) {
     await updateDoc(userTransactionDoc, {
