@@ -15,7 +15,7 @@ export const getResetPasswordContent = (
       <EnvelopeIcon className="text-custom-green h-8 w-8" aria-hidden="true" />
     </div>
   ),
-  children: (
+  children: () => (
     <div className="mt-4 flex flex-col items-start justify-start">
       <label
         htmlFor="email-reset"

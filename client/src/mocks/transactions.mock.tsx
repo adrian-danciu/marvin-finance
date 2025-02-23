@@ -5,9 +5,9 @@ import {
 } from "@heroicons/react/20/solid";
 
 export const statuses = {
-  Paid: "text-green-700 bg-green-50 ring-green-600/20",
-  Withdraw: "text-gray-600 bg-gray-50 ring-gray-500/10",
-  Overdue: "text-red-700 bg-red-50 ring-red-600/10",
+  paid: "text-green-700 bg-green-50 ring-green-600/20",
+  withdraw: "text-gray-600 bg-gray-50 ring-gray-500/10",
+  overdue: "text-red-700 bg-red-50 ring-red-600/10",
 };
 export const days = [
   {

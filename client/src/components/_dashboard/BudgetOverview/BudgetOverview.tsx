@@ -14,7 +14,7 @@ const BudgetOverview = () => {
 
         <ul className="flex flex-col items-start justify-start w-full  gap-2">
           {budgetMock.map((element) => (
-            <li className="text-[12px]  font-bold text-gray-800">
+            <li className="text-[12px]  font-bold text-gray-800" key={element.name}>
               {element.name}:
               <span className="text-gray-400 font-normal text-left">
                 {element.value}$/{element.limit}$

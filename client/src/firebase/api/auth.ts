@@ -40,6 +40,7 @@ export const registerUser = async (userData: UserCredentials) => {
     const user = userCredential.user;
     if (user) {
       await addUserToFirestore(user.uid, {
+
         email: email,
         firstName: firstName,
         lastName: lastName,

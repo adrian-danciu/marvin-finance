@@ -10,4 +10,5 @@ export interface Transaction {
   currency: string;
   created_at: string;
   updated_at: string;
+  status: string;
 }
