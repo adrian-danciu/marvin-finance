@@ -1,11 +1,24 @@
+import {
+  ArrowDownCircleIcon,
+  ArrowUpCircleIcon,
+} from "@heroicons/react/20/solid";
 import { Fragment } from "react";
-import { days, statuses } from "../../../mocks/transactions.mock";
+import { statuses } from "../../../mocks/transactions.mock";
+import { Transaction } from "../../../types/transactions.types";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Table() {
+export default function Table({
+  transactions,
+}: {
+  transactions: Transaction[];
+}) {
+  if (!transactions) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div className="mt-10 bg-white rounded-xl">
       <div className="px-4 sm:px-6 lg:px-8 py-4 bg-black w-full h-full rounded-t-xl">
@@ -25,78 +38,84 @@ export default function Table() {
                 </tr>
               </thead>
               <tbody className="bg-white">
-                {days.map((day) => (
-                  <Fragment key={day.dateTime}>
-                    {day.transactions.map((transaction) => (
-                      <tr key={transaction.id}>
-                        <td className="relative py-5 pr-6">
-                          <div className="flex gap-x-6">
-                            <transaction.icon
+                <Fragment>
+                  {transactions.map((transaction) => (
+                    <tr key={transaction.id}>
+                      <td className="relative py-5 pr-6">
+                        <div className="flex gap-x-6">
+                          {transaction.type === "income" ? (
+                            <ArrowUpCircleIcon
                               className="hidden h-6 w-5 flex-none text-gray-400 sm:block"
                               aria-hidden="true"
                             />
-                            <div className="flex-auto">
-                              <div className="flex items-start gap-x-3">
-                                <div className="text-sm font-medium leading-6 text-gray-900">
-                                  {transaction.amount}
-                                </div>
-                                <div
-                                  className={classNames(
-                                    statuses[
-                                      transaction.status as keyof typeof statuses
-                                    ],
-                                    "rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset"
-                                  )}
-                                >
-                                  {transaction.status}
-                                </div>
+                          ) : (
+                            <ArrowDownCircleIcon
+                              className="hidden h-6 w-5 flex-none text-gray-400 sm:block"
+                              aria-hidden="true"
+                            />
+                          )}
+
+                          <div className="flex-auto">
+                            <div className="flex items-start gap-x-3">
+                              <div className="text-sm font-medium leading-6 text-gray-900">
+                                {transaction.amount} $
                               </div>
-                              {transaction.tax ? (
-                                <div className="mt-1 text-xs leading-5 text-gray-500">
-                                  {transaction.tax} tax
-                                </div>
-                              ) : null}
+                              <div
+                                className={classNames(
+                                  statuses[
+                                    transaction.status as keyof typeof statuses
+                                  ],
+                                  "rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset first-letter:capitalize"
+                                )}
+                              >
+                                {transaction.status}
+                              </div>
                             </div>
+                            {/* {transaction.tax ? (
+                              <div className="mt-1 text-xs leading-5 text-gray-500">
+                                {transaction.tax} tax
+                              </div>
+                            ) : null} */}
                           </div>
-                          <div className="absolute bottom-0 right-full h-px w-screen bg-gray-100" />
-                          <div className="absolute bottom-0 left-0 h-px w-screen bg-gray-100" />
-                        </td>
-                        <td className="hidden py-5 pr-6 sm:table-cell">
-                          <div className="text-sm leading-6 text-gray-900">
-                            {transaction.category}
-                          </div>
-                          <div className="mt-1 text-xs leading-5 text-gray-500">
-                            {transaction.description}
-                          </div>
-                        </td>
-                        <td className="py-5 text-right">
-                          <div className="flex justify-end">
-                            <a
-                              href={transaction.href}
-                              className="text-sm font-medium leading-6 text-custom-green hover:opacity-70"
-                            >
-                              View
-                              <span className="hidden sm:inline">
-                                {" "}
-                                transaction
-                              </span>
-                              <span className="sr-only">
-                                , invoice #{transaction.invoiceNumber},{" "}
-                                {transaction.category}
-                              </span>
-                            </a>
-                          </div>
-                          <div className="mt-1 text-xs leading-5 text-gray-500">
-                            Invoice{" "}
-                            <span className="text-gray-900">
-                              #{transaction.invoiceNumber}
+                        </div>
+                        <div className="absolute bottom-0 right-full h-px w-screen bg-gray-100" />
+                        <div className="absolute bottom-0 left-0 h-px w-screen bg-gray-100" />
+                      </td>
+                      <td className="hidden py-5 pr-6 sm:table-cell">
+                        <div className="text-sm leading-6 text-gray-900 first-letter:capitalize">
+                          {transaction.category}
+                        </div>
+                        <div className="mt-1 text-xs leading-5 text-gray-500 first-letter:capitalize">
+                          {transaction.title}
+                        </div>
+                      </td>
+                      <td className="py-5 text-right">
+                        <div className="flex justify-end">
+                          <a
+                            href={"#"}
+                            className="text-sm font-medium leading-6 text-custom-green hover:opacity-70"
+                          >
+                            View
+                            <span className="hidden sm:inline">
+                              {" "}
+                              transaction
                             </span>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </Fragment>
-                ))}
+                            {/* <span className="sr-only">
+                              , {transaction.invoiceNumber},{" "}
+                              {transaction.category}
+                            </span> */}
+                          </a>
+                        </div>
+                        <div className="mt-1 text-xs leading-5 text-gray-500">
+                          Transaction date:{" "}
+                          <span className="text-gray-900">
+                            {transaction.date}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </Fragment>
               </tbody>
             </table>
           </div>

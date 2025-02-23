@@ -54,6 +54,7 @@ const Login: React.FC = () => {
       const userDetails = await fetchUserDetails(userCredential?.uid as string);
       dispatch(setLoginStatus(true));
       dispatch(setUserDetails(userDetails as UserCredentials));
+
       navigate("/app");
     } catch (error) {
       console.error("Login error:", error);
