@@ -5,21 +5,20 @@ import {
 } from "@heroicons/react/20/solid";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import logoFull from "../../assets/full_logo.png";
 import { navigation, userNavigation } from "../../constants/navigation.config";
 import { logoutUser } from "../../firebase/api/auth";
-import { UserCredentials } from "../../types/user.types";
 import { fetchAllTransactions } from "../../firebase/api/transactions/fetchTransactions";
-import { Transaction } from "../../types/transactions.types";
 import { setUserTransactions } from "../../store/actions";
-import { useDispatch } from "react-redux";
+import { Transaction } from "../../types/transactions.types";
+import { UserCredentials } from "../../types/user.types";
 
 export default function AppLayout() {
   const userDetails = useSelector(
     (state: { userDetails: { userDetails: UserCredentials } }) =>
-      state.userDetails.userDetails,
+      state.userDetails.userDetails
   );
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -29,7 +28,6 @@ export default function AppLayout() {
 
   const getTransactions = async () => {
     const transactions = await fetchAllTransactions(userDetails?.id as string);
-    console.log(transactions);
     dispatch(setUserTransactions(transactions as Transaction[]));
   };
 
@@ -39,7 +37,7 @@ export default function AppLayout() {
 
   const handleLogout = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    item: { name: string; href: string },
+    item: { name: string; href: string }
   ) => {
     e.preventDefault();
     if (item.name === "Sign out") {

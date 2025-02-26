@@ -6,7 +6,7 @@ import {
 
 export const statuses = {
   paid: "text-green-700 bg-green-50 ring-green-600/20",
-  withdraw: "text-gray-600 bg-gray-50 ring-gray-500/10",
+  unpaid: "text-gray-600 bg-gray-50 ring-gray-500/10",
   overdue: "text-red-700 bg-red-50 ring-red-600/10",
 };
 export const days = [

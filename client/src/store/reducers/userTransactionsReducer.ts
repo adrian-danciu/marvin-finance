@@ -1,4 +1,4 @@
-import { FETCH_USER_TRANSACTIONS } from "../actionTypes";
+import { FETCH_USER_TRANSACTIONS, UPDATE_TRANSACTIONS } from "../actionTypes";
 
 const initialState = {
   transactions: [],
@@ -9,6 +9,13 @@ const initialState = {
 const userTransactionsReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case FETCH_USER_TRANSACTIONS:
+      return {
+        ...state,
+        transactions: action.payload,
+        loading: false,
+        error: null,
+      };
+    case UPDATE_TRANSACTIONS:
       return {
         ...state,
         transactions: action.payload,

@@ -1,10 +1,11 @@
+import { Transaction } from "../types/transactions.types";
+import { UserCredentials } from "../types/user.types";
 import {
+  FETCH_USER_TRANSACTIONS,
   SET_LOGIN_STATUS,
   SET_USER_DETAILS,
-  FETCH_USER_TRANSACTIONS,
+  UPDATE_TRANSACTIONS,
 } from "./actionTypes";
-import { UserCredentials } from "../types/user.types";
-import { Transaction } from "../types/transactions.types";
 
 export const setLoginStatus = (status: boolean) => ({
   type: SET_LOGIN_STATUS,
@@ -19,4 +20,9 @@ export const setUserDetails = (user: UserCredentials) => ({
 export const setUserTransactions = (transactions: Transaction[]) => ({
   type: FETCH_USER_TRANSACTIONS,
   payload: transactions,
+});
+
+export const updateTransactions = (transaction: Transaction[]) => ({
+  type: UPDATE_TRANSACTIONS,
+  payload: transaction,
 });
