@@ -5,12 +5,13 @@ import {
 } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import { getAddExpenseContent } from "../../../constants/newExpense.content";
 import { getAddIncomeContent } from "../../../constants/newIncome.content";
 import { addTransaction } from "../../../firebase/api/transactions/addTransactions";
 import useAnimatedNumber from "../../../hooks/useAnimatedNumber";
+import { updateTransactions } from "../../../store/actions";
 import { DialogProps } from "../../../types/dialog.types";
 import { Transaction } from "../../../types/transactions.types";
 import { UserCredentials } from "../../../types/user.types";
@@ -65,6 +66,12 @@ export default function GeneralStats() {
       state.userDetails.userDetails
   );
 
+  const userTransactions = useSelector(
+    (state: { userTransactions: { transactions: Transaction[] } }) =>
+      state.userTransactions.transactions
+  );
+
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -88,14 +95,21 @@ export default function GeneralStats() {
         currency,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
+        status: "unpaid",
       };
-
 
       if (activeClientType === "income") {
         await addTransaction(userDetails.id, transactionDetails);
       } else {
         await addTransaction(userDetails.id, transactionDetails);
       }
+
+      dispatch(
+        updateTransactions([
+          ...Object.values(userTransactions),
+          transactionDetails,
+        ])
+      );
 
       reset();
       setDialogOpen(false);

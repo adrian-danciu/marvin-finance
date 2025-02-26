@@ -8,7 +8,7 @@ import { Transaction } from "../../../types/transactions.types";
 const Dashboard = () => {
   const userTransactions = useSelector(
     (state: { userTransactions: { transactions: Transaction[] } }) =>
-      state.userTransactions.transactions,
+      state.userTransactions.transactions
   );
   return (
     <>
