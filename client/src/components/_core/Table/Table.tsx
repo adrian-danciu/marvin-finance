@@ -5,6 +5,7 @@ import {
 import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import { getEditTransactionContent } from "../../../constants/editTransaction.content";
 import { updateTransaction } from "../../../firebase/api/transactions/updateTransaction";
 import { statuses } from "../../../mocks/transactions.mock";
@@ -132,12 +133,12 @@ export default function Table({
                           >
                             Edit
                           </button>
-                          <a
-                            href={"#"}
+                          <Link
+                            to={`/app/transactions/${transaction.id}`}
                             className="text-sm font-medium leading-6 text-custom-green hover:opacity-70"
                           >
                             View
-                          </a>
+                          </Link>
                         </div>
                         <div className="mt-1 text-xs leading-5 text-gray-500">
                           Transaction date:{" "}

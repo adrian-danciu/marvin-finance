@@ -1,15 +1,18 @@
 import { useSelector } from "react-redux";
+import Table from "../../../components/_core/Table/Table";
 import { Transaction } from "../../../types/transactions.types";
 
 const Transactions = () => {
   const userTransactions = useSelector(
     (state: { userTransactions: { transactions: Transaction[] } }) =>
-      state.userTransactions.transactions,
+     Object.values(state.userTransactions.transactions),
   );
 
-  console.log(userTransactions);
-
-  return <div>Transactions</div>;
+  return (
+    <div>
+      <Table transactions={userTransactions} />
+    </div>
+  );
 };
 
 export default Transactions;

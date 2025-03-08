@@ -6,6 +6,7 @@ import Calendar from "../pages/appLayout/pages/Calendar";
 import Dashboard from "../pages/appLayout/pages/Dashboard";
 import Profile from "../pages/appLayout/pages/Profile";
 import Transactions from "../pages/appLayout/pages/Transactions";
+import TransactionDetail from "../pages/appLayout/pages/TransactionDetail";
 import LandingPage from "../pages/landingPage/LandingPage";
 import Login from "../pages/login/Login";
 import Register from "../pages/register/Register";
@@ -18,6 +19,7 @@ const AppRoutes: React.FC = () => (
         <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="transactions" element={<Transactions />} />
+        <Route path="transactions/:id" element={<TransactionDetail />} />
         <Route path="accounts" element={<Accounts />} />
         <Route path="budgets" element={<Budgets />} />
         <Route path="calendar" element={<Calendar />} />
