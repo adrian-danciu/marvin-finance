@@ -1,4 +1,8 @@
-import { FETCH_USER_TRANSACTIONS, UPDATE_TRANSACTIONS } from "../actionTypes";
+import {
+  FETCH_USER_TRANSACTIONS,
+  UPDATE_TRANSACTION_BY_ID,
+  UPDATE_TRANSACTIONS,
+} from "../actionTypes";
 
 const initialState = {
   transactions: [],
@@ -16,6 +20,13 @@ const userTransactionsReducer = (state = initialState, action: any) => {
         error: null,
       };
     case UPDATE_TRANSACTIONS:
+      return {
+        ...state,
+        transactions: action.payload,
+        loading: false,
+        error: null,
+      };
+    case UPDATE_TRANSACTION_BY_ID:
       return {
         ...state,
         transactions: action.payload,

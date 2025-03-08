@@ -2,9 +2,15 @@ import {
   ArrowDownCircleIcon,
   ArrowUpCircleIcon,
 } from "@heroicons/react/20/solid";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { getEditTransactionContent } from "../../../constants/editTransaction.content";
+import { updateTransaction } from "../../../firebase/api/transactions/updateTransaction";
 import { statuses } from "../../../mocks/transactions.mock";
+import { updateTransactions } from "../../../store/actions";
 import { Transaction } from "../../../types/transactions.types";
+import DialogComponent from "../Dialog/Dialog";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -15,6 +21,40 @@ export default function Table({
 }: {
   transactions: Transaction[];
 }) {
+  const [isEditOpen, setEditOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<Transaction | null>(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Transaction>();
+  const dispatch = useDispatch();
+
+  const handleEditClick = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setEditOpen(true);
+  };
+
+  const handleUpdate = async (data: Partial<Transaction>) => {
+
+    if (selectedTransaction) {
+      await updateTransaction(selectedTransaction.user_id, {
+        ...selectedTransaction,
+        ...data,
+      });
+      setEditOpen(false);
+      
+      // Optionally, dispatch an action to update the Redux store
+     const index =  transactions.findIndex((transaction)=>(transaction.id === selectedTransaction.id))
+     transactions[index] = {...selectedTransaction, ...data}
+
+      dispatch(
+        updateTransactions(transactions)
+      );
+    }
+  };
+
   if (!transactions) {
     return <p>Loading...</p>;
   }
@@ -71,11 +111,6 @@ export default function Table({
                                 {transaction.status}
                               </div>
                             </div>
-                            {/* {transaction.tax ? (
-                              <div className="mt-1 text-xs leading-5 text-gray-500">
-                                {transaction.tax} tax
-                              </div>
-                            ) : null} */}
                           </div>
                         </div>
                         <div className="absolute bottom-0 right-full h-px w-screen bg-gray-100" />
@@ -90,20 +125,18 @@ export default function Table({
                         </div>
                       </td>
                       <td className="py-5 text-right">
-                        <div className="flex justify-end">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => handleEditClick(transaction)}
+                            className="text-sm font-medium leading-6 text-custom-blue hover:opacity-70 "
+                          >
+                            Edit
+                          </button>
                           <a
                             href={"#"}
                             className="text-sm font-medium leading-6 text-custom-green hover:opacity-70"
                           >
                             View
-                            <span className="hidden sm:inline">
-                              {" "}
-                              transaction
-                            </span>
-                            {/* <span className="sr-only">
-                              , {transaction.invoiceNumber},{" "}
-                              {transaction.category}
-                            </span> */}
                           </a>
                         </div>
                         <div className="mt-1 text-xs leading-5 text-gray-500">
@@ -121,6 +154,19 @@ export default function Table({
           </div>
         </div>
       </div>
+      {isEditOpen && selectedTransaction && (
+        <DialogComponent
+          open={isEditOpen}
+          setOpen={setEditOpen}
+          content={getEditTransactionContent(
+            () => setEditOpen(false),
+            selectedTransaction
+          )}
+          register={register}
+          handleSubmit={handleSubmit(handleUpdate)}
+          errors={errors}
+        />
+      )}
     </div>
   );
 }

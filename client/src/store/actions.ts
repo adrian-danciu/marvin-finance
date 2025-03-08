@@ -4,6 +4,7 @@ import {
   FETCH_USER_TRANSACTIONS,
   SET_LOGIN_STATUS,
   SET_USER_DETAILS,
+  UPDATE_TRANSACTION_BY_ID,
   UPDATE_TRANSACTIONS,
 } from "./actionTypes";
 
@@ -22,7 +23,12 @@ export const setUserTransactions = (transactions: Transaction[]) => ({
   payload: transactions,
 });
 
-export const updateTransactions = (transaction: Transaction[]) => ({
+export const updateTransactions = (transactions: Transaction[]) => ({
   type: UPDATE_TRANSACTIONS,
+  payload: transactions,
+});
+
+export const updateTransactionById = (transaction: Transaction[]) => ({
+  type: UPDATE_TRANSACTION_BY_ID,
   payload: transaction,
 });
