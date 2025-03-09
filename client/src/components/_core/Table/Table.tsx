@@ -6,12 +6,18 @@ import {
   MagnifyingGlassIcon,
   CurrencyDollarIcon,
   CalendarIcon,
+  TrashIcon,
+  PencilSquareIcon,
+  EyeIcon,
+  ReceiptRefundIcon,
 } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { getEditTransactionContent } from "../../../constants/editTransaction.content";
+import { getDeleteTransactionContent } from "../../../constants/deleteTransaction.content";
+import { deleteTransaction } from "../../../firebase/api/transactions/deleteTransaction";
 import { updateTransaction } from "../../../firebase/api/transactions/updateTransaction";
 import { statuses } from "../../../mocks/transactions.mock";
 import { updateTransactions } from "../../../store/actions";
@@ -32,6 +38,7 @@ export default function Table({
   showLatestOnly?: boolean;
 }) {
   const [isEditOpen, setEditOpen] = useState(false);
+  const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null);
   const [sortType, setSortType] = useState<SortType>("date-asc");
@@ -48,6 +55,25 @@ export default function Table({
     setEditOpen(true);
   };
 
+  const handleDeleteClick = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setDeleteOpen(true);
+    
+  };
+
+  const handleDelete = async () => {
+    if (selectedTransaction) {
+      try {
+        await deleteTransaction(selectedTransaction.id);
+        const updatedTransactions = transactions.filter(t => t.id !== selectedTransaction.id);
+        dispatch(updateTransactions(updatedTransactions));
+        setDeleteOpen(false);
+      } catch (error) {
+        console.error("Error deleting transaction:", error);
+      }
+    }
+  };
+
   const handleUpdate = async (data: Partial<Transaction>) => {
     if (selectedTransaction) {
       await updateTransaction(selectedTransaction.user_id, {
@@ -55,39 +81,58 @@ export default function Table({
         ...data,
       });
       setEditOpen(false);
-      
-      const index = transactions.findIndex((transaction)=>(transaction.id === selectedTransaction.id))
-      transactions[index] = {...selectedTransaction, ...data}
 
-      dispatch(
-        updateTransactions(transactions)
+      const index = transactions.findIndex(
+        (transaction) => transaction.id === selectedTransaction.id
       );
+      transactions[index] = { ...selectedTransaction, ...data };
+
+      dispatch(updateTransactions(transactions));
     }
   };
 
-  if (!transactions) {
-    return <p>Loading...</p>;
+  if (!transactions || transactions.length === 0) {
+    return (
+      <div className="mt-10 bg-white rounded-xl">
+        <div className="px-4 sm:px-6 lg:px-8 py-4 bg-black w-full rounded-t-xl">
+          <h2 className="text-base font-semibold leading-6 text-white">
+            {showLatestOnly ? "Recent Transactions" : "Transactions"}
+          </h2>
+        </div>
+        <div className="flex flex-col items-center justify-center py-12">
+          <ReceiptRefundIcon className="mx-auto h-12 w-12 text-custom-green" />
+          <h3 className="mt-2 text-sm font-semibold text-gray-900">No transactions</h3>
+          <p className="mt-1 text-sm text-gray-500">
+            Get started by creating a new transaction.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   const sortTransactions = (transactions: Transaction[]) => {
     const sortedTransactions = [...transactions];
-    
+
     switch (sortType) {
       case "date-asc":
-        return sortedTransactions.sort((a, b) => 
-          a.date && b.date ? new Date(a.date).getTime() - new Date(b.date).getTime() : 0
+        return sortedTransactions.sort((a, b) =>
+          a.date && b.date
+            ? new Date(a.date).getTime() - new Date(b.date).getTime()
+            : 0
         );
       case "date-desc":
-        return sortedTransactions.sort((a, b) => 
-          a.date && b.date ? new Date(b.date).getTime() - new Date(a.date).getTime() : 0
+        return sortedTransactions.sort((a, b) =>
+          a.date && b.date
+            ? new Date(b.date).getTime() - new Date(a.date).getTime()
+            : 0
         );
       case "amount-asc":
-        return sortedTransactions.sort((a, b) => 
-          (Number(a.amount) || 0) - (Number(b.amount) || 0)
+        return sortedTransactions.sort(
+          (a, b) => (Number(a.amount) || 0) - (Number(b.amount) || 0)
         );
       case "amount-desc":
-        return sortedTransactions.sort((a, b) => 
-          (Number(b.amount) || 0) - (Number(a.amount) || 0)
+        return sortedTransactions.sort(
+          (a, b) => (Number(b.amount) || 0) - (Number(a.amount) || 0)
         );
       default:
         return sortedTransactions;
@@ -97,13 +142,16 @@ export default function Table({
   // Filter and sort transactions
   const filteredAndSortedTransactions = showLatestOnly
     ? [...transactions]
-        .filter(t => t.date)
-        .sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime())
+        .filter((t) => t.date)
+        .sort(
+          (a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime()
+        )
         .slice(-5)
     : sortTransactions(
-        transactions.filter(t => 
-          t.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          t.category?.toLowerCase().includes(searchQuery.toLowerCase())
+        transactions.filter(
+          (t) =>
+            t.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            t.category?.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
 
@@ -114,7 +162,7 @@ export default function Table({
           <h2 className="text-base font-semibold leading-6 text-white">
             {showLatestOnly ? "Recent Transactions" : "Transactions"}
           </h2>
-          
+
           {!showLatestOnly && (
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
               <div className="relative w-full sm:w-64">
@@ -127,24 +175,36 @@ export default function Table({
                   className="block w-full rounded-md border-0 py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-custom-green sm:text-sm sm:leading-6"
                 />
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setSortType(sortType === "date-asc" ? "date-desc" : "date-asc")}
+                  onClick={() =>
+                    setSortType(
+                      sortType === "date-asc" ? "date-desc" : "date-asc"
+                    )
+                  }
                   className={classNames(
                     "inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium",
-                    sortType.startsWith("date") ? "bg-custom-green text-white" : "bg-white text-gray-700 hover:bg-gray-50"
+                    sortType.startsWith("date")
+                      ? "bg-custom-green text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-50"
                   )}
                 >
                   <CalendarIcon className="h-4 w-4" />
                   {sortType === "date-asc" ? "Oldest" : "Newest"}
                 </button>
-                
+
                 <button
-                  onClick={() => setSortType(sortType === "amount-asc" ? "amount-desc" : "amount-asc")}
+                  onClick={() =>
+                    setSortType(
+                      sortType === "amount-asc" ? "amount-desc" : "amount-asc"
+                    )
+                  }
                   className={classNames(
                     "inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium",
-                    sortType.startsWith("amount") ? "bg-custom-green text-white" : "bg-white text-gray-700 hover:bg-gray-50"
+                    sortType.startsWith("amount")
+                      ? "bg-custom-green text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-50"
                   )}
                 >
                   <CurrencyDollarIcon className="h-4 w-4" />
@@ -215,17 +275,27 @@ export default function Table({
                       </td>
                       <td className="py-5 text-right">
                         <div className="flex justify-end gap-2">
-                          <button
-                            onClick={() => handleEditClick(transaction)}
-                            className="text-sm font-medium leading-6 text-custom-blue hover:opacity-70 "
-                          >
-                            Edit
-                          </button>
+                          {!showLatestOnly ? (
+                            <>
+                              <button
+                                onClick={() => handleEditClick(transaction)}
+                                className="text-sm font-medium leading-6 text-custom-blue hover:opacity-70"
+                              >
+                                <PencilSquareIcon className="h-5 w-5" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteClick(transaction)}
+                                className="text-sm font-medium leading-6 text-red-600 hover:opacity-70"
+                              >
+                                <TrashIcon className="h-5 w-5" />
+                              </button>
+                            </>
+                          ) : null}
                           <Link
                             to={`/app/transactions/${transaction.id}`}
                             className="text-sm font-medium leading-6 text-custom-green hover:opacity-70"
                           >
-                            View
+                            <EyeIcon className="h-5 w-5" />
                           </Link>
                         </div>
                         <div className="mt-1 text-xs leading-5 text-gray-500">
@@ -253,6 +323,23 @@ export default function Table({
           )}
           register={register}
           handleSubmit={handleSubmit(handleUpdate)}
+          errors={errors}
+        />
+      )}
+      {isDeleteOpen && selectedTransaction && (
+        <DialogComponent
+          open={isDeleteOpen}
+          setOpen={setDeleteOpen}
+          content={getDeleteTransactionContent(
+            () => setDeleteOpen(false),
+            handleDelete,
+            selectedTransaction.title
+          )}
+          register={register}
+          handleSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            handleDelete();
+          }}
           errors={errors}
         />
       )}

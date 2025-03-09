@@ -13,7 +13,7 @@ const Transactions = ({ showLatestOnly = false }: TransactionsProps) => {
   );
 
   return (
-    <div>
+    <div className="h-[100vh]">
       <Table transactions={userTransactions} showLatestOnly={showLatestOnly} />
     </div>
   );
