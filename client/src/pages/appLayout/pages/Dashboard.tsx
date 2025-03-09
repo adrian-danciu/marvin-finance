@@ -13,7 +13,7 @@ const Dashboard = () => {
   return (
     <>
       <GeneralStats />
-      <Table transactions={Object.values(userTransactions)} />
+      <Table transactions={Object.values(userTransactions)} showLatestOnly/>
       <div className="grid grid-cols-12 mt-10 gap-6 xl:gap-8">
         <BudgetOverview />
         <UpcomingPayments />

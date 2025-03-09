@@ -11,4 +11,5 @@ export interface Transaction {
   created_at: string;
   updated_at: string;
   status: string;
+  description?: string
 }

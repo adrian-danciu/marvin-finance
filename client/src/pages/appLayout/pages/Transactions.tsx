@@ -2,7 +2,11 @@ import { useSelector } from "react-redux";
 import Table from "../../../components/_core/Table/Table";
 import { Transaction } from "../../../types/transactions.types";
 
-const Transactions = () => {
+interface TransactionsProps {
+  showLatestOnly?: boolean;
+}
+
+const Transactions = ({ showLatestOnly = false }: TransactionsProps) => {
   const userTransactions = useSelector(
     (state: { userTransactions: { transactions: Transaction[] } }) =>
      Object.values(state.userTransactions.transactions),
@@ -10,7 +14,7 @@ const Transactions = () => {
 
   return (
     <div>
-      <Table transactions={userTransactions} />
+      <Table transactions={userTransactions} showLatestOnly={showLatestOnly} />
     </div>
   );
 };

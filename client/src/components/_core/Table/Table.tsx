@@ -2,6 +2,11 @@ import {
   ArrowDownCircleIcon,
   ArrowUpCircleIcon,
 } from "@heroicons/react/20/solid";
+import {
+  MagnifyingGlassIcon,
+  CurrencyDollarIcon,
+  CalendarIcon,
+} from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -17,14 +22,20 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+type SortType = "date-asc" | "date-desc" | "amount-asc" | "amount-desc";
+
 export default function Table({
   transactions,
+  showLatestOnly = false,
 }: {
   transactions: Transaction[];
+  showLatestOnly?: boolean;
 }) {
   const [isEditOpen, setEditOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null);
+  const [sortType, setSortType] = useState<SortType>("date-asc");
+  const [searchQuery, setSearchQuery] = useState("");
   const {
     register,
     handleSubmit,
@@ -38,7 +49,6 @@ export default function Table({
   };
 
   const handleUpdate = async (data: Partial<Transaction>) => {
-
     if (selectedTransaction) {
       await updateTransaction(selectedTransaction.user_id, {
         ...selectedTransaction,
@@ -46,9 +56,8 @@ export default function Table({
       });
       setEditOpen(false);
       
-      // Optionally, dispatch an action to update the Redux store
-     const index =  transactions.findIndex((transaction)=>(transaction.id === selectedTransaction.id))
-     transactions[index] = {...selectedTransaction, ...data}
+      const index = transactions.findIndex((transaction)=>(transaction.id === selectedTransaction.id))
+      transactions[index] = {...selectedTransaction, ...data}
 
       dispatch(
         updateTransactions(transactions)
@@ -60,12 +69,91 @@ export default function Table({
     return <p>Loading...</p>;
   }
 
+  const sortTransactions = (transactions: Transaction[]) => {
+    const sortedTransactions = [...transactions];
+    
+    switch (sortType) {
+      case "date-asc":
+        return sortedTransactions.sort((a, b) => 
+          a.date && b.date ? new Date(a.date).getTime() - new Date(b.date).getTime() : 0
+        );
+      case "date-desc":
+        return sortedTransactions.sort((a, b) => 
+          a.date && b.date ? new Date(b.date).getTime() - new Date(a.date).getTime() : 0
+        );
+      case "amount-asc":
+        return sortedTransactions.sort((a, b) => 
+          (Number(a.amount) || 0) - (Number(b.amount) || 0)
+        );
+      case "amount-desc":
+        return sortedTransactions.sort((a, b) => 
+          (Number(b.amount) || 0) - (Number(a.amount) || 0)
+        );
+      default:
+        return sortedTransactions;
+    }
+  };
+
+  // Filter and sort transactions
+  const filteredAndSortedTransactions = showLatestOnly
+    ? [...transactions]
+        .filter(t => t.date)
+        .sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime())
+        .slice(-5)
+    : sortTransactions(
+        transactions.filter(t => 
+          t.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          t.category?.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+
   return (
     <div className="mt-10 bg-white rounded-xl">
-      <div className="px-4 sm:px-6 lg:px-8 py-4 bg-black w-full h-full rounded-t-xl">
-        <h2 className="mx-auto w-full text-base font-semibold leading-6 text-white text-left">
-          Transactions
-        </h2>
+      <div className="px-4 sm:px-6 lg:px-8 py-4 bg-black w-full rounded-t-xl">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h2 className="text-base font-semibold leading-6 text-white">
+            {showLatestOnly ? "Recent Transactions" : "Transactions"}
+          </h2>
+          
+          {!showLatestOnly && (
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+              <div className="relative w-full sm:w-64">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search transactions..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="block w-full rounded-md border-0 py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-custom-green sm:text-sm sm:leading-6"
+                />
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setSortType(sortType === "date-asc" ? "date-desc" : "date-asc")}
+                  className={classNames(
+                    "inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium",
+                    sortType.startsWith("date") ? "bg-custom-green text-white" : "bg-white text-gray-700 hover:bg-gray-50"
+                  )}
+                >
+                  <CalendarIcon className="h-4 w-4" />
+                  {sortType === "date-asc" ? "Oldest" : "Newest"}
+                </button>
+                
+                <button
+                  onClick={() => setSortType(sortType === "amount-asc" ? "amount-desc" : "amount-asc")}
+                  className={classNames(
+                    "inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium",
+                    sortType.startsWith("amount") ? "bg-custom-green text-white" : "bg-white text-gray-700 hover:bg-gray-50"
+                  )}
+                >
+                  <CurrencyDollarIcon className="h-4 w-4" />
+                  {sortType === "amount-asc" ? "Smallest" : "Largest"}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       <div className="overflow-hidden border-t border-gray-100">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 bg-white">
@@ -80,7 +168,7 @@ export default function Table({
               </thead>
               <tbody className="bg-white">
                 <Fragment>
-                  {transactions.map((transaction) => (
+                  {filteredAndSortedTransactions.map((transaction) => (
                     <tr key={transaction.id}>
                       <td className="relative py-5 pr-6">
                         <div className="flex gap-x-6">
