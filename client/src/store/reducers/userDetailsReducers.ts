@@ -2,6 +2,8 @@ import { SET_USER_DETAILS } from "../actionTypes";
 
 const initialState = {
   userDetails: {},
+  loading: false,
+  error: null,
 };
 
 const userDetailsReducer = (state = initialState, action: any) => {
@@ -10,6 +12,8 @@ const userDetailsReducer = (state = initialState, action: any) => {
       return {
         ...state,
         userDetails: action.payload,
+        looading: false,
+        error: null,
       };
     default:
       return state;

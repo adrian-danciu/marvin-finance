@@ -4,10 +4,17 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/solid";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
 import { getAddExpenseContent } from "../../../constants/newExpense.content";
 import { getAddIncomeContent } from "../../../constants/newIncome.content";
+import { addTransaction } from "../../../firebase/api/transactions/addTransactions";
 import useAnimatedNumber from "../../../hooks/useAnimatedNumber";
+import { updateTransactions } from "../../../store/actions";
 import { DialogProps } from "../../../types/dialog.types";
+import { Transaction } from "../../../types/transactions.types";
+import { UserCredentials } from "../../../types/user.types";
 import DialogComponent from "../../_core/Dialog/Dialog";
 import AccountShowcase from "../AccountsShowcase/AccountsShowcase";
 
@@ -27,7 +34,7 @@ interface Client {
 const clients: Client[] = [
   {
     id: 1,
-    name: "Income",
+    name: "income",
     icon: <ArrowUpLeftIcon className="h-6 w-6 text-green-100" />,
     lastTransaction: {
       date: "December 13, 2022",
@@ -38,7 +45,7 @@ const clients: Client[] = [
   },
   {
     id: 2,
-    name: "Expenses",
+    name: "expenses",
     icon: <ArrowDownRightIcon className="h-6 w-6 text-red-100" />,
     lastTransaction: {
       date: "January 22, 2023",
@@ -51,44 +58,72 @@ const clients: Client[] = [
 
 export default function GeneralStats() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogContent, setDialogContent] = useState(null);
-  const [formData, setFormData] = useState({ title: "", date: "", amount: "" });
+  const [activeClientType, setActiveClientType] = useState<
+    "income" | "expense" | null
+  >(null);
+  const userDetails = useSelector(
+    (state: { userDetails: { userDetails: UserCredentials } }) =>
+      state.userDetails.userDetails
+  );
 
-  const handleFormDataChange = (key: any, value: any) => {
-    console.log("Form data changed: ", key, value);
-    setFormData((prevData) => ({ ...prevData, [key]: value }));
-  };
+  const userTransactions = useSelector(
+    (state: { userTransactions: { transactions: Transaction[] } }) =>
+      state.userTransactions.transactions
+  );
 
-  const handleSubmit = () => {
-    setDialogOpen(false);
-    console.log("Form data submitted: ", formData);
+  const dispatch = useDispatch();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+
+  const onSubmit = async (data: Transaction) => {
+    try {
+      const { title, amount, date, account, category, currency } = data;
+      const transactionDetails = {
+        id: uuidv4(),
+        user_id: userDetails.id,
+        title,
+        date: date,
+        type: activeClientType,
+        account,
+        amount: Number(amount),
+        category,
+        currency,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        status: "unpaid",
+      };
+
+      if (activeClientType === "income") {
+        await addTransaction(userDetails.id, transactionDetails);
+      } else {
+        await addTransaction(userDetails.id, transactionDetails);
+      }
+
+      dispatch(
+        updateTransactions([
+          ...Object.values(userTransactions),
+          transactionDetails,
+        ])
+      );
+
+      reset();
+      setDialogOpen(false);
+    } catch (error) {
+      console.error("Error while adding transaction:", error);
+    }
   };
 
   const handleCancel = () => {
     setDialogOpen(false);
-    setFormData({ title: "", date: "", amount: "" });
   };
 
-  const handleOpenDialog = (clientName: string) => {
-    if (clientName === "Income") {
-      setDialogContent(
-        getAddIncomeContent(
-          formData,
-          handleFormDataChange,
-          handleSubmit,
-          handleCancel
-        ) as any
-      );
-    } else if (clientName === "Expenses") {
-      setDialogContent(
-        getAddExpenseContent(
-          formData,
-          handleFormDataChange,
-          handleSubmit,
-          handleCancel
-        ) as any
-      );
-    }
+  const handleOpenDialog = (clientType: "income" | "expense") => {
+    setActiveClientType(clientType);
     setDialogOpen(true);
   };
 
@@ -111,19 +146,23 @@ export default function GeneralStats() {
             className="overflow-hidden rounded-xl border border-gray-200"
           >
             <div
-              className={`flex items-center justify-between gap-x-4 border-b border-gray-900/5 ${client.name === "Income" ? "bg-custom-green" : "bg-red-500"} p-6`}
+              className={`flex items-center justify-between gap-x-4 border-b border-gray-900/5 ${client.name === "income" ? "bg-custom-green" : "bg-red-500"} p-6`}
             >
               <div className="flex items-center gap-x-4">
                 {client.icon}
                 <div
-                  className={`text-md font-medium leading-6 ${client.name === "Income" ? "text-green-100" : "text-red-100"}`}
+                  className={`text-md font-medium leading-6 ${client.name === "income" ? "text-green-100" : "text-red-100"}`}
                 >
-                  {client.name}
+                  {client.name === "income" ? "Income" : "Expenses"}
                 </div>
               </div>
-              <button onClick={() => handleOpenDialog(client.name)}>
+              <button
+                onClick={() =>
+                  handleOpenDialog(client.name as "income" | "expense")
+                }
+              >
                 <PlusIcon
-                  className={`h-8 w-8 rounded-xl p-2  ${client.name === "Income" ? "bg-green-100" : "bg-red-100"} ${client.name === "Income" ? "text-custom-green" : "text-red-500"}`}
+                  className={`h-8 w-8 rounded-xl p-2  ${client.name === "income" ? "bg-green-100" : "bg-red-100"} ${client.name === "income" ? "text-custom-green" : "text-red-500"}`}
                 />
               </button>
             </div>
@@ -137,7 +176,7 @@ export default function GeneralStats() {
               </div>
               <div className="flex justify-between gap-x-4 py-3">
                 <dt className="text-gray-500">
-                  Last {client.name === "Income" ? "Income" : "Expense"}
+                  Last {client.name === "income" ? "Income" : "Expense"}
                 </dt>
                 <dd className="text-gray-700">
                   <time dateTime={client.lastTransaction.dateTime}>
@@ -154,7 +193,14 @@ export default function GeneralStats() {
         <DialogComponent
           open={dialogOpen}
           setOpen={setDialogOpen}
-          content={dialogContent as any}
+          content={
+            activeClientType === "income"
+              ? getAddIncomeContent(handleCancel)
+              : getAddExpenseContent(handleCancel)
+          }
+          register={register}
+          handleSubmit={handleSubmit(onSubmit as any)}
+          errors={errors}
         />
       )}
     </ul>
